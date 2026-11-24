@@ -1,34 +1,50 @@
 # Træningsregistrering → Google Kalender
 
-En lille web-app til mobilens startskærm. Når du åbner den, starter tiden. Vælg km (5–20, standard 12) og tryk **Gem**.
+En lille app til mobilens startskærm med et stopur-ikon. Når du åbner den, starter tiden. Vælg km (5–20, standard 12) og tryk **Gem**.
 Så oprettes et rødt event i din Google Kalender fra starttidspunktet til nu, med titlen
 `12 på 34.50` (km på minutter med 2 decimaler).
 
-Appen kører som et Google Apps Script under din egen Google-konto. Derfor skal du ikke logge ind på telefonen.
+Løsningen består af to dele:
 
-## Opsætning (én gang, ca. 5 min)
+- **`apps-script/`** er backend. Det er et Google Apps Script, der kører som dig og opretter eventet. Derfor skal du ikke logge ind på telefonen.
+- **`docs/`** er selve appen med ikon. Den hostes på GitHub Pages og åbner i fuld skærm uden browserlinje.
 
-1. Gå til <https://script.google.com> (logget ind med din Gmail) og klik **Nyt projekt**.
-2. Kopiér indholdet af `apps-script/Code.gs` ind i `Code.gs`.
-3. Klik **+ → HTML**, kald filen `index`, og kopiér indholdet af `apps-script/index.html` ind.
-4. *(Valgfrit)* Under **Projektindstillinger** skal du slå "Vis manifestfilen appsscript.json" til og indsætte `apps-script/appsscript.json`. Den sætter tidszonen til Europe/Copenhagen.
-5. Klik **Implementer → Ny implementering → Type: Webapp**
-   - *Udfør som:* **Mig**
-   - *Hvem har adgang:* **Alle**
-6. Klik **Implementer** og giv adgang til din kalender. Det er den eneste gang, du skal godkende noget.
-7. Kopiér web-app-URL'en (`https://script.google.com/macros/s/.../exec`).
-8. Åbn URL'en på telefonen og vælg **Føj til hjemmeskærm** (Safari: Del-knappen, Chrome: ⋮-menuen).
+## 1. Backend (Google Apps Script)
+
+1. Erstat indholdet af `Code.gs` i dit projekt på script.google.com med `apps-script/Code.gs`, og gem.
+2. Slet filen `index.html` i Apps Script-projektet, hvis du har oprettet den. Den skal ikke bruges længere.
+3. Klik **Implementer → Administrer implementeringer → ✏️ Rediger → Version: Ny version → Implementer**.
+   Det skal stadig være *Udfør som: Mig* og *Adgang: Alle*.
+4. Kopiér web-app-URL'en (`https://script.google.com/macros/s/.../exec`).
+   Hvis du åbner den i en browser, skal der stå "OK - træningsappens backend kører."
+
+## 2. Appen (GitHub Pages)
+
+GitHub Pages kræver et offentligt repo, medmindre du har GitHub Pro. Koden indeholder ingen hemmeligheder,
+fordi din script-URL kun gemmes på telefonen.
+
+1. På GitHub: **Settings → General → Danger Zone → Change visibility → Public**.
+2. **Settings → Pages → Source: Deploy from a branch → Branch: `ccr-3d7fd4e0-eidprx`, mappe `/docs` → Save**.
+3. Efter ca. 1 minut ligger appen på `https://laslabs22.github.io/Workout-registration/`.
+
+## 3. Telefonen
+
+**iPhone:** Åbn adressen i **Safari**, tryk på Del-knappen og vælg **Føj til hjemmeskærm**.
+**Android:** Åbn adressen i **Chrome**, tryk på ⋮ og vælg **Installér app / Føj til startskærm**.
+
+Åbn appen fra ikonet på startskærmen, **ikke fra browseren**. Første gang skal du indsætte din `/exec`-URL og trykke **Gem**.
+Det sker kun én gang.
 
 ## Brug
 
-- **Ved start:** tryk på ikonet. Tiden starter og vises på skærmen.
-- **Undervejs:** du kan godt lukke appen. Starttidspunktet er gemt på serveren, så tiden fortsætter, når du åbner den igen.
-- **Ved slut:** åbn appen, justér km med slider eller +/−, og tryk **Gem**.
-- **"Start tiden forfra"** nulstiller starttidspunktet til nu, fx hvis du åbnede appen for tidligt.
-- En træning, der ikke er gemt inden for 6 timer, kasseres, og der startes en ny.
+- **Ved start:** tryk på ikonet, og tiden starter.
+- **Undervejs:** du kan godt lukke appen. Starttidspunktet er gemt hos Google, så tiden fortsætter.
+- **Ved slut:** åbn appen, vælg km, tryk **Gem**, og luk appen.
+- Næste gang du åbner appen, starter en ny træning automatisk.
+- **"Start tiden forfra"** nulstiller starttidspunktet til nu.
+- En træning, der ikke er gemt inden for 6 timer, kasseres.
 
 ## Bemærk
 
-- URL'en er hemmelig. Alle, der kender den, kan oprette events i din kalender, så del den ikke.
-- Hvis du ændrer koden senere: **Implementer → Administrer implementeringer → Rediger → Ny version**. Så beholder du den samme URL.
-- Du kan ændre farven i `Code.gs` med `CalendarApp.EventColor.RED`, standard-km med `DEFAULT_KM` og talformatet i `formatNumber`.
+- Script-URL'en er hemmelig. Alle, der kender den, kan oprette events i din kalender.
+- Du kan ændre farve, standard-km og talformat i `apps-script/Code.gs`.

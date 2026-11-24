@@ -1,21 +1,36 @@
 /**
- * Træningsregistrering -> Google Kalender
+ * Træningsregistrering -> Google Kalender (backend)
  *
- * Deployes som Google Apps Script web-app ("Udfør som: mig", "Adgang: Alle"),
- * så eventet oprettes direkte i din egen kalender uden login på telefonen.
+ * Deployes som Google Apps Script web-app ("Udfør som: mig", "Adgang: Alle").
+ * Selve appen (forsiden med ikon) ligger i /docs og kalder denne URL.
  */
 
 const DEFAULT_KM = 12;
 const STALE_HOURS = 6;          // En "glemt" træning ældre end dette startes forfra
 const START_KEY = 'trainingStart';
 
-function doGet() {
-  return HtmlService.createHtmlOutputFromFile('index')
-    .setTitle('Træning')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+/** Appen sender POST med JSON: {action: "state" | "restart" | "save", km?: number} */
+function doPost(e) {
+  let result;
+  try {
+    const req = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    if (req.action === 'save') result = save(req.km);
+    else if (req.action === 'restart') result = restart();
+    else result = getState();
+    result.ok = true;
+  } catch (err) {
+    result = { ok: false, error: String(err && err.message || err) };
+  }
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
-/** Kaldes når appen åbnes. Starter en træning, hvis der ikke allerede kører en. */
+/** Bruges kun til at teste, at URL'en virker. */
+function doGet() {
+  return ContentService.createTextOutput('OK - træningsappens backend kører.');
+}
+
+/** Starter en træning, hvis der ikke allerede kører en. */
 function getState() {
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -33,7 +48,7 @@ function getState() {
   }
 }
 
-/** Starter tidtagningen forfra (fx hvis appen blev åbnet ved en fejl). */
+/** Starter tidtagningen forfra. */
 function restart() {
   PropertiesService.getScriptProperties().deleteProperty(START_KEY);
   return getState();
