@@ -2,7 +2,7 @@
 
 En lille web-app til mobilens startskærm. Når du åbner den, starter tiden. Vælg km (5–20, standard 12) og tryk **Gem**.
 Så oprettes et rødt event i din Google Kalender fra starttidspunktet til nu, med titlen
-`Træning 12 på 34,5` (km på minutter med 1 decimal).
+`12 på 34.50` (km på minutter med 2 decimaler).
 
 Appen kører som et Google Apps Script under din egen Google-konto. Derfor skal du ikke logge ind på telefonen.
 
@@ -31,4 +31,4 @@ Appen kører som et Google Apps Script under din egen Google-konto. Derfor skal 
 
 - URL'en er hemmelig. Alle, der kender den, kan oprette events i din kalender, så del den ikke.
 - Hvis du ændrer koden senere: **Implementer → Administrer implementeringer → Rediger → Ny version**. Så beholder du den samme URL.
-- Du kan ændre farven i `Code.gs` med `CalendarApp.EventColor.RED`, standard-km med `DEFAULT_KM` og decimaltegnet i `formatNumber`.
+- Du kan ændre farven i `Code.gs` med `CalendarApp.EventColor.RED`, standard-km med `DEFAULT_KM` og talformatet i `formatNumber`.

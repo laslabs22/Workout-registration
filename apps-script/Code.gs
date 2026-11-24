@@ -53,7 +53,7 @@ function save(km) {
 
     const end = Date.now();
     const minutes = (end - start) / 60000;
-    const title = 'Træning ' + formatNumber(km) + ' på ' + formatNumber(minutes, 1);
+    const title = formatNumber(km) + ' på ' + formatNumber(minutes, 2);
 
     const event = CalendarApp.getDefaultCalendar()
       .createEvent(title, new Date(start), new Date(end));
@@ -66,8 +66,7 @@ function save(km) {
   }
 }
 
-/** Dansk talformat: komma som decimaltegn. */
+/** Talformat med punktum som decimaltegn. */
 function formatNumber(n, decimals) {
-  const s = decimals === undefined ? String(Math.round(n * 10) / 10) : n.toFixed(decimals);
-  return s.replace('.', ',');
+  return decimals === undefined ? String(Math.round(n * 10) / 10) : n.toFixed(decimals);
 }
